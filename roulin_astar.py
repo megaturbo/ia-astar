@@ -71,8 +71,10 @@ def h4(a, b):
 def astar(start, end, heuristic):
     closed_queue = []
     open_queue = [start]
+    came_from = {}
 
-    score = {start: heuristic(start, end)}
+    g_score = {start: heuristic(start, end)}
+    f_score = {}
 
     while len(open_queue) > 0:
         current = open_queue.pop(min(open_queue, key=score.get))
@@ -83,15 +85,15 @@ def astar(start, end, heuristic):
         for l in current.links:
             if l in closed_queue:
                 continue
-            g_score = score[current] # + distance between ?
+            t_g_score = g_score[current] # + distance between ?
             if l not in open_queue:
                 open_queue.append(l)
-            elif g_score >= score[l]:
+            elif t_g_score >= g_score[l]:
                 continue
 
             came_from[l] = current
-            score[l] = g_score
-            f_score[l] = score[l] + heuristic(l, end)
+            g_score[l] = t_g_score
+            f_score[l] = g_score[l] + heuristic(l, end)
 
 
 def reconstruct_path(came_from, current):

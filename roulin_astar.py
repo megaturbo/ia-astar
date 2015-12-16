@@ -43,15 +43,55 @@ def initCities(f_connections, f_positions):
 
 # HEURISTICS
 def h0(a, b):
+    """ h0(n) = 0 """
     return 0
 
 
 def h1(a, b):
+    """ h1(n) = distance en X """
     return math.fabs(a.posx - b.posx)
 
 
 def h2(a, b):
+    """ h2(n) = distance en Y """
     return math.fabs(a.posy - b.posy)
+
+
+def h3(a, b):
+    """ h3(n) = distance euclidienne """
+    return math.sqrt(h1(a, b) ** 2 + h2(a, b) ** 2)
+
+
+def h4(a, b):
+    """ h4(n) = distance de Manhattan """
+    return h1(a, b) + h2(a, b)
+
+
+# ALGORITHM
+def astar(start, end, heuristic):
+    closed_queue = []
+    open_queue = [start]
+
+    score = {start: heuristic(start, end)}
+
+    while len(open_queue) > 0:
+        current = open_queue.pop(min(open_queue, key=score.get))
+        if current == end:
+            return  # path
+
+        closed_queue.append(current)
+        for l in current.links:
+            if l in closed_queue:
+                continue
+            g_score = score[current] + heuristic(current, l)
+
+
+def reconstruct_path(came_from, current):
+    total_path = [current]
+    while current in came_from.keys():
+        current = came_from[current]
+        total_path.append(current)
+    return total_path
 
 
 if __name__ == '__main__':
@@ -59,3 +99,9 @@ if __name__ == '__main__':
     file_positions = open('positions.txt', 'r')
 
     cities, links = initCities(file_links, file_positions)
+
+    c0 = cities[0]
+    c1 = cities[1]
+    print(h1(c0, c1))
+    print(h2(c0, c1))
+    print(h3(c0, c1))

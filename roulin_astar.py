@@ -77,15 +77,16 @@ def astar(start, end, heuristic):
     f_score = {}
 
     while len(open_queue) > 0:
-        current = open_queue.pop(min(open_queue, key=score.get))
+        current = min(open_queue, key=g_score.get)
         if current == end:
-            return  # path
+            return reconstruct_path(came_from, end)
 
+        open_queue.remove(current)
         closed_queue.append(current)
         for l in current.links:
             if l in closed_queue:
                 continue
-            t_g_score = g_score[current] # + distance between ?
+            t_g_score = g_score[current]  # + distance between ?
             if l not in open_queue:
                 open_queue.append(l)
             elif t_g_score >= g_score[l]:
@@ -94,11 +95,12 @@ def astar(start, end, heuristic):
             came_from[l] = current
             g_score[l] = t_g_score
             f_score[l] = g_score[l] + heuristic(l, end)
+    return "FAILURE"
 
 
 def reconstruct_path(came_from, current):
     total_path = [current]
-    while current in came_from.keys():
+    while current in came_from:
         current = came_from[current]
         total_path.append(current)
     return total_path
@@ -110,8 +112,5 @@ if __name__ == '__main__':
 
     cities, links = initCities(file_links, file_positions)
 
-    c0 = cities[0]
-    c1 = cities[1]
-    print(h1(c0, c1))
-    print(h2(c0, c1))
-    print(h3(c0, c1))
+    path = astar(cities[0], cities[1], h1)
+    print(path)

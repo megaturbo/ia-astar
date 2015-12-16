@@ -1,4 +1,5 @@
 import math
+from heapq import *
 
 __author__ = 'thomas.roulin'
 
@@ -11,24 +12,26 @@ class City:
         self.links = []
 
     def __repr__(self):
-        return self.name + " " + str(self.posx) + " " + str(self.posy)
+        return "City [" + self.name + " " + str(self.posx) + " " + str(self.posy) + "]"
 
-    def link_to(self, city):
-        self.links.append(city)
+    def add_link(self, link):
+        self.links.append(link)
 
 
 class Link:
-    def __init__(self, city1, city2, dist):
-        self.city1 = city1
-        self.city2 = city2
+    def __init__(self, city, dist):
+        self.city = city
         self.dist = dist
 
+    def __repr__(self):
+        return "Link [" + self.city.__repr__() + " " + str(self.dist) + "]"
 
-def getCity(cities, city_name):
-    return [city for city in cities if city.name == city_name]
+
+def get_city(cities, city_name):
+    return [city for city in cities if city.name == city_name][0]
 
 
-def initCities(f_connections, f_positions):
+def init_cities(f_connections, f_positions):
     cities = []
     links = []
 
@@ -36,9 +39,13 @@ def initCities(f_connections, f_positions):
         cities.append(City(p[0], int(p[1]), int(p[2])))
 
     for c in [conn.split(" ") for conn in f_connections]:
-        links.append(Link(getCity(cities, c[0]), getCity(cities, c[1]), int(c[2])))
+        city1 = get_city(cities, c[0])
+        city2 = get_city(cities, c[1])
+        dist = int(c[2])
+        city1.add_link(Link(city2, dist))
+        city2.add_link(Link(city1, dist))
 
-    return cities, links
+    return cities
 
 
 # HEURISTICS
@@ -69,33 +76,42 @@ def h4(a, b):
 
 # ALGORITHM
 def astar(start, end, heuristic):
-    closed_queue = []
-    open_queue = [start]
+    closed_set = set()
+    open_set = set()
+    open_set.add(start)
+
     came_from = {}
 
-    g_score = {start: heuristic(start, end)}
-    f_score = {}
+    g_score = {start: 0}
+    f_score = {start: heuristic(start, end)}
 
-    while len(open_queue) > 0:
-        current = min(open_queue, key=g_score.get)
+    while open_set:
+        print(closed_set)
+        current = min(open_set, key=f_score.get)
+
         if current == end:
             return reconstruct_path(came_from, end)
 
-        open_queue.remove(current)
-        closed_queue.append(current)
-        for l in current.links:
-            if l in closed_queue:
-                continue
-            t_g_score = g_score[current]  # + distance between ?
-            if l not in open_queue:
-                open_queue.append(l)
-            elif t_g_score >= g_score[l]:
+        open_set.remove(current)
+        closed_set.add(current)
+
+        for i in range(len(current.links)):
+            neighbor = current.links[i].city
+
+            if neighbor in closed_set:
                 continue
 
-            came_from[l] = current
-            g_score[l] = t_g_score
-            f_score[l] = g_score[l] + heuristic(l, end)
-    return "FAILURE"
+            t_g_score = g_score[current] + current.links[i].dist
+
+            if neighbor not in open_set:
+                open_set.add(neighbor)
+            elif t_g_score >= g_score[neighbor]:
+                continue
+
+            came_from[neighbor] = current
+            g_score[neighbor] = t_g_score
+            f_score[neighbor] = g_score[neighbor] + heuristic(neighbor, end)
+    return None
 
 
 def reconstruct_path(came_from, current):
@@ -110,7 +126,10 @@ if __name__ == '__main__':
     file_links = open('connections.txt', 'r')
     file_positions = open('positions.txt', 'r')
 
-    cities, links = initCities(file_links, file_positions)
+    cities = init_cities(file_links, file_positions)
 
-    path = astar(cities[0], cities[1], h1)
+    a = get_city(cities, "Warsaw")
+    b = get_city(cities, "Lisbon")
+
+    path = astar(a, b, h0)
     print(path)

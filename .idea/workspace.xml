@@ -45,7 +45,7 @@
         <entry file="file://$PROJECT_DIR$/roulin_astar.py">
           <provider selected="true" editor-type-id="text-editor">
             <state vertical-scroll-proportion="0.6300905">
-              <caret line="85" column="22" selection-start-line="85" selection-start-column="22" selection-end-line="85" selection-end-column="22" />
+              <caret line="85" column="59" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
               <folding />
             </state>
           </provider>
@@ -427,7 +427,7 @@
     <entry file="file://$PROJECT_DIR$/roulin_astar.py">
       <provider selected="true" editor-type-id="text-editor">
         <state vertical-scroll-proportion="0.6300905">
-          <caret line="85" column="22" selection-start-line="85" selection-start-column="22" selection-end-line="85" selection-end-column="22" />
+          <caret line="85" column="59" selection-start-line="85" selection-start-column="59" selection-end-line="85" selection-end-column="59" />
           <folding />
         </state>
       </provider>

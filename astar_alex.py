@@ -10,7 +10,7 @@ class city:
         self.name = name
         self.x = x
         self.y = y
-
+        return self
 
 
 
@@ -22,12 +22,12 @@ def h0(n):
 
 def h1(n, b):
     ''' h1(n) = distance en X entre n et b '''
-    return math.fabs(n.posx - b.posx)
+    return math.fabs(n.x - b.x)
 
 
 def h2(n, b):
     ''' h2(n) = distance en Y entre n et b '''
-    return math.fabs(n.posy - b.posy)
+    return math.fabs(n.y - b.y)
 
 
 def h3(n, b):
@@ -85,6 +85,11 @@ def reconstruct_path(a, b):
     return total_path
 
 
-
 if __name__ == '__main__':
-    astar(1, 2, h1)
+    cities = []
+    connections = open('connections.txt', 'r')
+    positions = open('positions', 'r')
+
+    ''' Je ne sais guère '''
+    for l.split(" ") in positions:
+        cities.append(city(l[0], l[1], l[2]))

@@ -1,5 +1,4 @@
 import math
-from heapq import *
 
 __author__ = 'thomas.roulin'
 
@@ -12,10 +11,13 @@ class City:
         self.links = []
 
     def __repr__(self):
-        return "City [" + self.name + " " + str(self.posx) + " " + str(self.posy) + "]"
+        return self.name
 
     def add_link(self, link):
         self.links.append(link)
+
+    def get_link(self, name):
+        return [link for link in self.links if link.city.name == name][0]
 
 
 class Link:
@@ -76,9 +78,8 @@ def h4(a, b):
 
 # ALGORITHM
 def astar(start, end, heuristic):
-    closed_set = set()
-    open_set = set()
-    open_set.add(start)
+    closed_set = []
+    open_set = [start]
 
     came_from = {}
 
@@ -87,13 +88,14 @@ def astar(start, end, heuristic):
 
     while open_set:
         print(closed_set)
+
         current = min(open_set, key=f_score.get)
 
         if current == end:
             return reconstruct_path(came_from, end)
 
         open_set.remove(current)
-        closed_set.add(current)
+        closed_set.append(current)
 
         for i in range(len(current.links)):
             neighbor = current.links[i].city
@@ -104,7 +106,7 @@ def astar(start, end, heuristic):
             t_g_score = g_score[current] + current.links[i].dist
 
             if neighbor not in open_set:
-                open_set.add(neighbor)
+                open_set.append(neighbor)
             elif t_g_score >= g_score[neighbor]:
                 continue
 
@@ -122,6 +124,16 @@ def reconstruct_path(came_from, current):
     return total_path
 
 
+def show_path(path, cities):
+    dist = 0
+    l = len(path)
+    for i in range(l):
+        city = get_city(cities, str(path[l - i - 1]))
+        print(city.__repr__() + " (" + str(dist) + " km)")
+        if i < l - 1:
+            dist += (city.get_link(str(path[l - i - 2]))).dist
+
+
 if __name__ == '__main__':
     file_links = open('connections.txt', 'r')
     file_positions = open('positions.txt', 'r')
@@ -131,5 +143,5 @@ if __name__ == '__main__':
     a = get_city(cities, "Warsaw")
     b = get_city(cities, "Lisbon")
 
-    path = astar(a, b, h0)
-    print(path)
+    path = astar(a, b, h4)
+    show_path(path, cities)

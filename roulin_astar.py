@@ -87,7 +87,7 @@ def astar(start, end, heuristic):
     f_score = {start: heuristic(start, end)}
 
     while open_set:
-        print(closed_set)
+        # print(closed_set)
 
         current = min(open_set, key=f_score.get)
 
@@ -139,9 +139,14 @@ if __name__ == '__main__':
     file_positions = open('positions.txt', 'r')
 
     cities = init_cities(file_links, file_positions)
+    heuristics = [h0, h1, h2, h3, h4]
 
-    a = get_city(cities, "Warsaw")
-    b = get_city(cities, "Lisbon")
+    a = get_city(cities, "Paris")
+    b = get_city(cities, "Prague")
 
-    path = astar(a, b, h4)
-    show_path(path, cities)
+    for h in heuristics:
+        title = a.name + " to " + b.name + " with [" + h.__doc__ + "]"
+        print("=" * len(title))
+        print(title)
+        path = astar(a, b, h)
+        show_path(path, cities)

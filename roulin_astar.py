@@ -87,7 +87,7 @@ def astar(start, end, heuristic):
     f_score = {start: heuristic(start, end)}
 
     while open_set:
-        # print(closed_set)
+        print(closed_set)
 
         current = min(open_set, key=f_score.get)
 
@@ -129,7 +129,7 @@ def show_path(path, cities):
     l = len(path)
     for i in range(l):
         city = get_city(cities, str(path[l - i - 1]))
-        print(city.__repr__() + " (" + str(dist) + " km)")
+        print(">"+city.__repr__() + " (" + str(dist) + " km)")
         if i < l - 1:
             dist += (city.get_link(str(path[l - i - 2]))).dist
 
@@ -141,8 +141,8 @@ if __name__ == '__main__':
     cities = init_cities(file_links, file_positions)
     heuristics = [h0, h1, h2, h3, h4]
 
-    a = get_city(cities, "Paris")
-    b = get_city(cities, "Prague")
+    a = get_city(cities, "Copenhagen")
+    b = get_city(cities, "Lisbon")
 
     for h in heuristics:
         title = a.name + " to " + b.name + " with [" + h.__doc__ + "]"
